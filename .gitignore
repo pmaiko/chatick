@@ -1,0 +1,6 @@
+/.idea
+/node_modules
+/client/.idea
+/client/node_modules
+npm-debug.log
+.env

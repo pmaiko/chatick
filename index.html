@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<video id="video" width="320" height="240" autoplay="autoplay" ></video>
+<video id="video-remote" width="320" height="240" autoplay="autoplay" ></video>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    (function () {
+        // const socket = io.connect();
+        //
+        // socket.emit('send', 'lox')
+    }())
+</script>
+
+<script>
+    window.onload = function () {
+        const socket = io.connect();
+        const video = document.getElementById('video');
+        const video_remote = document.getElementById('video-remote');
+        let streamObj = false;
+
+
+
+        socket.on('back-stream-send', function (data) {
+
+        });
+
+        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+        window.URL.createObjectURL = window.URL.createObjectURL || window.URL.webkitCreateObjectURL || window.URL.mozCreateObjectURL || window.URL.msCreateObjectURL;
+
+        navigator.getUserMedia({video: true}, function (stream) {
+            video.srcObject = stream;
+            socket.emit('client-stream-send', {stream});
+        }, function () {
+            console.log('что-то не так с видеостримом или пользователь запретил его использовать :P');
+        });
+
+
+    };
+</script>
+</body>
+</html>
