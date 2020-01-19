@@ -1,5 +1,15 @@
 const express = require('express');
 const app = express();
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
 const { check, validationResult } = require('express-validator');
 const server = require('http').createServer(app);
 const io  = require('socket.io').listen(server);
@@ -35,13 +45,13 @@ app.get('/api/v1/', function (request, response) {
     });
 });
 
-app.post('/api/v1/register-user',
+app.post('/api/v1/register-user/',
     [
         check('email').isEmail(),
         check('password').isLength({ min: 6 }),
     ],
     async (request, response) => {
-    const errors = validationResult(request);
+        const errors = validationResult(request);
     if (!errors.isEmpty()) {
         return response.status(422).json({ errors: errors.array() });
     }
@@ -50,18 +60,18 @@ app.post('/api/v1/register-user',
         let query = await Users.find().select('email');
         if (query) {
             query.map(function (item) {
-                if (item.email === request.query.email) {
+                if (item.email === request.body.email) {
                     throw new Error('Mail has already been created')
                 }
             });
         }
 
-        const hashedPassword = await bcrypt.hash(request.query.password, 10);
+        const hashedPassword = await bcrypt.hash(request.body.password, 10);
 
         const users = new Users({
-            firstName: request.query.firstName ? request.query.firstName: '',
-            lastName: request.query.lastName ? request.query.lastName: '',
-            email: request.query.email ? request.query.email: '',
+            firstName: request.body.firstName ? request.body.firstName: '',
+            lastName: request.body.lastName ? request.body.lastName: '',
+            email: request.body.email ? request.body.email: '',
             //password: request.query.password ? Buffer.from(request.query.password).toString('base64'): '',
             password: hashedPassword ? hashedPassword: '',
         });
@@ -75,19 +85,19 @@ app.post('/api/v1/register-user',
     }
 });
 
-app.get('/api/v1/login',
+app.post('/api/v1/login',
     [
         check('email').isEmail(),
         check('password').isLength({ min: 6 }),
     ],
     async (request, response) => {
-    const user = await Users.findOne({'email': request.query.email}).select();
+    const user = await Users.findOne({'email': request.body.email}).select();
     if (!user) {
         response.status(400).send('Can find user');
     }
 
     try {
-        if (await bcrypt.compare(request.query.password, user.password)) {
+        if (await bcrypt.compare(request.body.password, user.password)) {
             //response.status(200).send('Success');
             //let Header = Buffer.from(headerRequest, 'base64').toString('ascii');
             let Header = {
@@ -106,7 +116,7 @@ app.get('/api/v1/login',
             Payload = Buffer.from(JSON.stringify(Payload)).toString('base64');
 
             const Signature = generateSignature(`${Header}.${Payload}`, Key);
-            const token = `${Header}.${Payload}.${Signature}`;
+            const token = `Bearer ${Header}.${Payload}.${Signature}`;
 
             response.json(token);
         }

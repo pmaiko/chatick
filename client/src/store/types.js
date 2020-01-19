@@ -1,6 +1,10 @@
-export const ADD_TOKEN = 'ADD_TOKEN';
+export const LOGIN = 'LOGIN';
+export const CHECK_LOGGED = "CHECK_LOGGED";
+export const LOGOUT = 'LOGOUT';
 
 
 export default {
-    ADD_TOKEN,
+    LOGIN,
+    CHECK_LOGGED,
+    LOGOUT,
 }

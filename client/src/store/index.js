@@ -1,4 +1,4 @@
-import addToken from "./actions";
+import actions from "./actions";
 import { connect } from 'react-redux';
 
 const mapStateToProps = (state) => {
@@ -8,7 +8,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = {
-    ...addToken,
+    ...actions,
 };
 
 export const store = (component) => {

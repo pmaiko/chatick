@@ -1,41 +1,64 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { store } from '../store/index';
+import { useHistory } from "react-router";
 
 
-class SingIn extends Component {
-    constructor(props) {
-        super(props);
-        //this.props.addToken()
-    }
+function SingIn(props) {
+    const history = useHistory();
+    const [state, setState] = useState({email: '', password: ''});
 
-    render() {
-        return (
-            <div className="sign-in">
-                <Link to="/registration">Sign Up</Link>
-                <form>
-                    <div className="form-group">
-                        <label htmlFor="exampleInputEmail1">Email address</label>
-                        <input type="email" className="form-control" id="exampleInputEmail1"
-                               aria-describedby="emailHelp" placeholder="Enter email" />
-                            <small id="emailHelp" className="form-text text-muted">We'll never share your email with
-                                anyone else.
-                            </small>
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="exampleInputPassword1">Password</label>
-                        <input type="password" className="form-control" id="exampleInputPassword1"
-                               placeholder="Password" />
-                    </div>
-                    <div className="form-check">
-                        <input type="checkbox" className="form-check-input" id="exampleCheck1" />
-                            <label className="form-check-label" htmlFor="exampleCheck1">Check me out</label>
-                    </div>
-                    <button type="submit" className="btn btn-primary">Submit</button>
-                </form>
-            </div>
-        )
-    }
+    const handleChange = (e) => {
+        setState({
+            ...state,
+            [e.target.name]: e.target.value,
+        });
+    };
+    const submitForm =  (e) => {
+        e.preventDefault();
+        props.login(state.email, state.password);
+        history.push("/chatWrapper");
+    };
+
+
+    return (
+        <div className="sign-in">
+            <form onSubmit={submitForm}>
+                <div className="form-group">
+                    <label htmlFor="email">Email address</label>
+                    <input type="email"
+                           className="form-control"
+                           name="email"
+                           id="email"
+                           autoComplete="username"
+                           placeholder="Enter email"
+                           value={state.email}
+                           onChange={handleChange}
+                    />
+                    <small id="emailHelp" className="form-text text-muted">We'll never share your email with
+                        anyone else.
+                    </small>
+                </div>
+                <div className="form-group">
+                    <label htmlFor="password">Password</label>
+                    <input type="password"
+                           className="form-control"
+                           name="password"
+                           id="password"
+                           autoComplete="current-password"
+                           placeholder="Password"
+                           value={state.password}
+                           onChange={handleChange}
+                    />
+                </div>
+                <div className="form-check">
+                    <input type="checkbox" className="form-check-input" id="rememberMe" />
+                    <label className="form-check-label" htmlFor="rememberMe">Remember me</label>
+                </div>
+                <button type="submit" className="btn btn-primary">Login</button>
+            </form>
+        </div>
+    )
 }
 
 

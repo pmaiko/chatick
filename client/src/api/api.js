@@ -9,7 +9,7 @@ export default {
     },
 
     login (params, callback) {
-        axios.get(API_URL + 'login', params).then((data) => {
+        axios.post(API_URL + 'login', params).then((data) => {
             callback(data);
         })
     }
