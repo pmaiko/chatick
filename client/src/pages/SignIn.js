@@ -17,7 +17,11 @@ function SingIn(props) {
     const submitForm =  (e) => {
         e.preventDefault();
         props.login(state.email, state.password);
-        history.push("/chatWrapper");
+
+        if (props.auth.logged) {
+            history.push("/chatWrapper");
+        }
+
     };
 
 

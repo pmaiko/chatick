@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 import {store} from "./store";
 import Header from "./components/header";
 
@@ -14,8 +14,11 @@ const history = createBrowserHistory();
 let path = history.location.pathname;
 
 function App(props) {
-    props.checkLogged();
-    const socket = openSocket('http://localhost:5000');
+    useEffect(() => {
+        props.checkLogged();
+        const socket = openSocket('http://localhost:5000');
+    },[]);
+
 
     return(
         <Router history={history}>
