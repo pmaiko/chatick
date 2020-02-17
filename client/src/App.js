@@ -5,7 +5,7 @@ import Header from "./components/header";
 import {Router, Route, Switch, Redirect} from "react-router";
 import { createBrowserHistory } from "history";
 
-import openSocket from 'socket.io-client';
+// import openSocket from 'socket.io-client';
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import ChatWrapper from "./pages/ChatWrapper";
@@ -16,7 +16,7 @@ let path = history.location.pathname;
 function App(props) {
     useEffect(() => {
         props.checkLogged();
-        const socket = openSocket('http://localhost:5000');
+        // const socket = openSocket('http://localhost:5000');
     },[]);
 
 

@@ -10,7 +10,7 @@ import App from './App';
 
 // styles
 import 'bootstrap/dist/css/bootstrap.css';
-import './assets/sass/style.scss'
+import './assets/sass/app.scss'
 
 const store = createStore(reducers, applyMiddleware(thunk));
 // store.getState();

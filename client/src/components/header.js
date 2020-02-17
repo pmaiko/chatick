@@ -15,23 +15,29 @@ function Header(props) {
     const infoJsx = () => {
         if(logged) {
             return (
-                <a href="#" onClick={(e) => {e.preventDefault(); logout()}}>
-                    Logout
-                </a>
+                <div className="actions">
+                    <a href="#" onClick={(e) => {e.preventDefault(); logout()}}>
+
+                        Logout
+                    </a>
+                </div>
             );
         }
 
         else {
             return(
-                <Link to="/registration">Sign Up</Link>
+                <div className="actions">
+                    <Link to="/registration">Sign Up</Link>
+                </div>
+
             );
         }
     };
 
     return (
         <div className="header">
-            {logged.toString()}
             <div className="logo">
+                Chatick
             </div>
 
             {infoJsx()}

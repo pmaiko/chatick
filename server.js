@@ -161,8 +161,8 @@ function checkToken(request, response, callback) {
 
 io.sockets.on('connection', function (socket) {
    console.log('connected socket');
-   // socket.on('client-stream-send', function (data) {
-   //    console.log(data);
-   //     io.sockets.emit('back-stream-send', data)
-   // })
+   socket.on('message', function (data) {
+      console.log(data);
+       io.sockets.emit('message', data)
+   })
 });

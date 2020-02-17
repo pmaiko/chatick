@@ -40,26 +40,6 @@ export default  {
             };
             api.login(params, (data) => {
                 const state = decodeToken(data.data);
-                // let token = data.data;
-                //
-                // state.token = token;
-                // token = token.replace("Bearer ", "");
-                // token = token.split('.');
-                //
-                // let header = token[0];
-                // let payload = token[1];
-                // let signature = token[2];
-                // payload = JSON.parse(Base64.decode(payload));
-                //
-                // state.userId = payload.userId;
-                // state.firstName = payload.firstName;
-                // state.lastName = payload.lastName;
-                // state.email = payload.email;
-                //
-                // axios.defaults.headers.common['Authorization'] = data.data;
-                // state.logged = true;
-                // localStorage.setItem('token', data.data);
-
                 dispatch(this.loginRequest({
                     type: types.LOGIN,
                     ...state,
