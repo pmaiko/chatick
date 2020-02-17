@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
 const PORT  = process.env.PORT || 5000;
+const dev = app.get('env') !== 'production';
+
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -36,7 +38,12 @@ async function start () {
        console.log(e);
    }
 }
-server.listen(PORT);
+if (dev) {
+
+    server.listen(PORT);
+}
+
+
 
 start();
 
@@ -175,3 +182,15 @@ io.sockets.on('connection', function (socket) {
     })
 
 });
+
+if (!dev) {
+    app.disable('x-powered-by');
+    app.use(compression());
+
+
+    app.use(express.static(path.resolve(__dirname + '/client', 'build')));
+
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname + '/client', 'build', 'index.html'));
+    })
+}
