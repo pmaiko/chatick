@@ -4,3 +4,7 @@
 /client/node_modules
 npm-debug.log
 .env
+/client/package-lock.json
+/client/yarn.lock
+yarn.lock
+package-lock.json
