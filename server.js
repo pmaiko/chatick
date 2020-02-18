@@ -44,7 +44,6 @@ if (!dev) {
     // app.disable('x-powered-by');
     // app.use(compression());
 
-
     app.use(express.static(path.resolve(__dirname + '/client', 'build')));
 
     app.get('*', (req, res) => {
@@ -54,13 +53,13 @@ if (!dev) {
 
 if (dev) {
 
-    server.listen(PORT);
     app.use(express.static(path.resolve(__dirname + '/client', 'build')));
 
     app.get('*', (req, res) => {
         res.sendFile(path.resolve(__dirname + '/client', 'build', 'index.html'));
     })
 }
+server.listen(PORT);
 
 
 
