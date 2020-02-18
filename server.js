@@ -4,11 +4,14 @@ const path = require('path');
 const PORT  = process.env.PORT || 5000;
 const dev = app.get('env') !== 'production';
 
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
+if (dev) {
+    app.use(function(req, res, next) {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        next();
+    });
+}
+
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -41,9 +44,6 @@ async function start () {
 }
 
 server.listen(PORT);
-
-
-
 start();
 
 app.get('/api/v1/', function (request, response) {
@@ -183,9 +183,6 @@ io.sockets.on('connection', function (socket) {
 });
 
 if (!dev) {
-    // app.disable('x-powered-by');
-    // app.use(compression());
-
     app.use(express.static(path.resolve(__dirname + '/client', 'build')));
 
     app.get('*', (req, res) => {
