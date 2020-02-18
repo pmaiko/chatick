@@ -14,8 +14,10 @@ class Users extends Component {
 
     componentDidMount() {
         this._isMounted = true;
+        if(this.props.auth.logged) {
+            this.props.socket.emit('getUsers');
+        }
 
-        this.props.socket.emit('getUsers');
 
         this.props.socket.on('getUsers', (data) => {
             let newState = this.state;
@@ -51,7 +53,7 @@ class Users extends Component {
     render() {
 
         let outputUsers = this.state.users.map((el, i) => {
-            console.log(el);
+            // console.log(el);
             return (
                 <div key={i} className="">
                     {el.firstName} {el.lastName}

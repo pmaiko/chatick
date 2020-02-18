@@ -1,7 +1,6 @@
 import React, {useState, useEffect, useMemo} from "react";
 import { store } from "../store";
-import { Link } from 'react-router-dom';
-import { useHistory } from "react-router";
+import { Link, useHistory } from 'react-router-dom';
 
 function Header(props) {
     const history = useHistory();

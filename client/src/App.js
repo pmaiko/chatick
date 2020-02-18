@@ -2,16 +2,18 @@ import React,{useEffect} from 'react';
 import {store} from "./store";
 import Header from "./components/header";
 
-import {Router, Route, Switch, Redirect} from "react-router";
-import { createBrowserHistory } from "history";
+// import {Router, Route, Switch, Redirect} from "react-router";
+// import { createBrowserHistory } from "history";
+
+import {BrowserRouter, Switch, Route} from "react-router-dom"
 
 // import openSocket from 'socket.io-client';
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import ChatWrapper from "./pages/ChatWrapper";
 
-const history = createBrowserHistory();
-let path = history.location.pathname;
+// const history = createBrowserHistory();
+// let path = history.location.pathname;
 
 function App(props) {
     useEffect(() => {
@@ -20,8 +22,8 @@ function App(props) {
     },[]);
 
 
-    return(
-        <Router history={history}>
+    return (
+        <BrowserRouter>
             <Header />
             <Switch>
                 <Route path="/chatWrapper" component={ChatWrapper}/>
@@ -29,9 +31,7 @@ function App(props) {
                 <Route path="/" component={SignIn}/>
             </Switch>
 
-            { props.auth.logged ? <Redirect to="/chatWrapper" />: path !== "/registration" ? <Redirect to="/" />: '' }
-        </Router>
-
+        </BrowserRouter>
     )
 }
 

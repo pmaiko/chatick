@@ -8,3 +8,5 @@ npm-debug.log
 /client/yarn.lock
 yarn.lock
 package-lock.json
+/client/yarn-error.log
+yarn-error.log

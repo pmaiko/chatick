@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useHistory } from "react-router";
+import { useHistory } from "react-router-dom";
 import { useForm } from 'react-hook-form';
 import api from '../api/api';
 import { store } from '../store/index';

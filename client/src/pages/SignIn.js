@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+
 import { store } from '../store/index';
-import { useHistory } from "react-router";
+import { useHistory } from "react-router-dom";
 
 
 function SingIn(props) {
-    const history = useHistory();
+    let history = useHistory();
+    useEffect(() =>{
+        if (props.auth.logged) {
+            history.push("/chatWrapper");
+        }
+    },[props.auth.logged]);
+
     const [state, setState] = useState({email: '', password: ''});
 
     const handleChange = (e) => {
@@ -17,11 +23,6 @@ function SingIn(props) {
     const submitForm =  (e) => {
         e.preventDefault();
         props.login(state.email, state.password);
-
-        if (props.auth.logged) {
-            history.push("/chatWrapper");
-        }
-
     };
 
 

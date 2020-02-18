@@ -1,15 +1,13 @@
 const express = require('express');
+const cors = require('cors');
+
 const app = express();
 const path = require('path');
 const PORT  = process.env.PORT || 5000;
 const dev = app.get('env') !== 'production';
 
 if (dev) {
-    app.use(function(req, res, next) {
-        res.header("Access-Control-Allow-Origin", "*");
-        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-        next();
-    });
+    app.use(cors({origin: 'http://localhost:3000'}));
 }
 
 
@@ -23,7 +21,10 @@ const io  = require('socket.io').listen(server);
 const mongoose  = require('mongoose');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
+
 const Users = require('./models/Users');
+const GeneralMessages = require('./models/GeneralMessages');
+
 const Key = "chatick";
 
 async function start () {
@@ -95,13 +96,13 @@ app.post('/api/v1/register-user/',
 app.post('/api/v1/login',
     [
         check('email').isEmail(),
-        check('password').isLength({ min: 6 }),
+        check('password').isLength({min: 6}),
     ],
-    async (request, response) => {
-    const user = await Users.findOne({'email': request.body.email}).select();
-    if (!user) {
-        response.status(400).send('Can find user');
-    }
+async (request, response) => {
+        const user = await Users.findOne({'email': request.body.email}).select();
+        if (!user) {
+            response.status(400).send('Can find user');
+        }
 
     try {
         if (await bcrypt.compare(request.body.password, user.password)) {
@@ -170,7 +171,14 @@ io.sockets.on('connection', function (socket) {
    console.log('connected socket');
 
    socket.on('message', function (data) {
-       io.sockets.emit('message', data)
+       io.sockets.emit('message', data);
+
+       const generalMessages = new GeneralMessages({
+           message: data.messageInput ? data.messageInput: '',
+           userId: data.userId ? data.userId: '',
+       });
+
+       generalMessages.save();
    });
 
     socket.on('getUsers', function () {
@@ -178,7 +186,25 @@ io.sockets.on('connection', function (socket) {
             io.sockets.emit('getUsers', data);
         });
 
-    })
+    });
+
+    socket.on('getGeneralMessage', function () {
+        GeneralMessages.find().select().then(function (data) {
+            if (Array.isArray(data)) {
+                data.map(function (item) {
+                    Users.findOne({'_id': item.userId}).select().then(function (user) {
+                        io.sockets.emit('getGeneralMessage', {
+                            generalMessage: item.message,
+                            userId: item.userId,
+                            firstName: user.firstName,
+                            lastName: user.lastName,
+                        })
+                    });
+                });
+            }
+        });
+
+    });
 
 });
 

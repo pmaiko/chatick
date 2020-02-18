@@ -14,6 +14,9 @@ class GeneralChat extends Component {
 
     componentDidMount() {
         this._isMounted = true;
+        if(this.props.auth.logged) {
+            this.props.socket.emit('getGeneralMessage');
+        }
 
         this.props.socket.on('message', (data) => {
             let newState = this.state;
@@ -26,10 +29,31 @@ class GeneralChat extends Component {
                 );
             }
         });
+
+        this.props.socket.on('getGeneralMessage', (data) => {
+            let newState = this.state;
+            newState.messages = [...newState.messages, {
+                message: data.generalMessage,
+                userId: data.userId,
+                firstName: data.firstName,
+                lastName: data.lastName,
+            }];
+
+            if (this._isMounted) {
+                this.setState({
+                        ...newState,
+                    }
+                );
+            }
+        });
     }
 
-    componentWillUnmount() {
+    componentWillUnmount(prevLogged) {
         this._isMounted = false;
+
+        // if(prevLogged !== this.props.auth.logged) {
+        //     this.props.socket.emit('getGeneralMessage');
+        // }
     }
 
     sendMessage() {
@@ -54,7 +78,7 @@ class GeneralChat extends Component {
             return (
                 <div key={i} className="massages__item">
                     <div className="messages__author">
-                        {!isMyself ? this.props.auth.firstName + ' ' + this.props.auth.lastName + ':': 'I:'}
+                        {!isMyself ? el.firstName + ' ' + el.lastName + ':': 'I:'}
                     </div>
                     <div className={isMyself ? 'massages__text--right' : 'massages__text'} >
                         {el.message}
