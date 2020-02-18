@@ -40,25 +40,6 @@ async function start () {
    }
 }
 
-if (!dev) {
-    // app.disable('x-powered-by');
-    // app.use(compression());
-
-    app.use(express.static(path.resolve(__dirname + '/client', 'build')));
-
-    app.get('*', (req, res) => {
-        res.sendFile(path.resolve(__dirname + '/client', 'build', 'index.html'));
-    })
-}
-
-if (dev) {
-
-    app.use(express.static(path.resolve(__dirname + '/client', 'build')));
-
-    app.get('*', (req, res) => {
-        res.sendFile(path.resolve(__dirname + '/client', 'build', 'index.html'));
-    })
-}
 server.listen(PORT);
 
 
@@ -200,5 +181,25 @@ io.sockets.on('connection', function (socket) {
     })
 
 });
+
+if (!dev) {
+    // app.disable('x-powered-by');
+    // app.use(compression());
+
+    app.use(express.static(path.resolve(__dirname + '/client', 'build')));
+
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname + '/client', 'build', 'index.html'));
+    })
+}
+
+if (dev) {
+
+    app.use(express.static(path.resolve(__dirname + '/client', 'build')));
+
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname + '/client', 'build', 'index.html'));
+    })
+}
 
 
