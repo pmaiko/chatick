@@ -184,8 +184,8 @@ io.sockets.on('connection', function (socket) {
 });
 
 if (!dev) {
-    app.disable('x-powered-by');
-    app.use(compression());
+    // app.disable('x-powered-by');
+    // app.use(compression());
 
 
     app.use(express.static(path.resolve(__dirname + '/client', 'build')));
