@@ -3,9 +3,10 @@ import { store } from '../store/index'
 import GeneralChat from './GeneralChat'
 import Users from './Users'
 import openSocket from 'socket.io-client'
+import {URL} from '../constants'
 
 class ChatWrapper extends Component {
-    socket = openSocket('http://localhost:5000');
+    socket = openSocket(URL);
 
     componentDidMount() {
         this.socket.on('connect', () => {
