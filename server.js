@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const path = require('path');
 const PORT  = process.env.PORT || 5000;
 const dev = app.get('env') !== 'production';
 
@@ -38,9 +39,27 @@ async function start () {
        console.log(e);
    }
 }
+
+if (!dev) {
+    // app.disable('x-powered-by');
+    // app.use(compression());
+
+
+    app.use(express.static(path.resolve(__dirname + '/client', 'build')));
+
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname + '/client', 'build', 'index.html'));
+    })
+}
+
 if (dev) {
 
     server.listen(PORT);
+    app.use(express.static(path.resolve(__dirname + '/client', 'build')));
+
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname + '/client', 'build', 'index.html'));
+    })
 }
 
 
@@ -183,14 +202,4 @@ io.sockets.on('connection', function (socket) {
 
 });
 
-if (!dev) {
-    // app.disable('x-powered-by');
-    // app.use(compression());
 
-
-    app.use(express.static(path.resolve(__dirname + '/client', 'build')));
-
-    app.get('*', (req, res) => {
-        res.sendFile(path.resolve(__dirname + '/client', 'build', 'index.html'));
-    })
-}
