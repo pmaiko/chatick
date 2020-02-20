@@ -19,13 +19,13 @@ function ChatWrapper(props) {
 
 
     return (
-        <div className="ChatWrapper">
-            <div className="container-fluid">
-                <div className="row">
-                    <div className="col-md-3">
+        <div className="chat-wrapper">
+            <div className="container-fluid h-100">
+                <div className="row h-100">
+                    <div className="col-md-3 h-100">
                         <Users socket={socket}/>
                     </div>
-                    <div className="col-md-6">
+                    <div className="col-md-6 h-100">
                         <GeneralChat socket={socket}/>
                     </div>
                 </div>

@@ -189,21 +189,36 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('getGeneralMessage', function () {
-        GeneralMessages.find().select().then(function (data) {
-            if (Array.isArray(data)) {
-                data.map(function (item) {
-                    Users.findOne({'_id': item.userId}).select().then(function (user) {
-                        io.sockets.emit('getGeneralMessage', {
-                            generalMessage: item.message,
-                            userId: item.userId,
-                            firstName: user.firstName,
-                            lastName: user.lastName,
-                        })
-                    });
-                });
-            }
-        });
+        async function generalMessage() {
+            let generalMessage = await GeneralMessages.find().sort([['_id', -1]]).limit(5);
+            generalMessage = generalMessage.reverse();
 
+            let users = await Users.find().select();
+
+            if (!Array.isArray(generalMessage)) {
+                generalMessage = [generalMessage];
+            }
+
+            let newArray = [];
+            generalMessage.map(messageObj =>{
+                users.map(userObj =>{
+                    if (messageObj.userId == userObj._id) {
+                        newArray = [...newArray, {
+                            message: messageObj.message,
+                            userId: userObj._id,
+                            firstName: userObj.firstName,
+                            lastName: userObj.lastName,
+                        }];
+                    }
+                });
+
+            });
+            return newArray;
+        }
+
+        generalMessage().then(function (data) {
+            io.sockets.emit('getGeneralMessage', data);
+        });
     });
 
 });

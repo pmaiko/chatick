@@ -13,39 +13,40 @@ class GeneralChat extends Component {
     }
 
     componentDidMount() {
-        this._isMounted = true;
         if(this.props.auth.logged) {
+            this._isMounted = true;
             this.props.socket.emit('getGeneralMessage');
+
+            this.props.socket.on('message', (data) => {
+                let newState = this.state;
+                newState.messages = [...newState.messages, {
+                    message: data.messageInput,
+                    userId: data.userId,
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                }];
+
+                if (this._isMounted) {
+                    this.setState({
+                            ...newState,
+                        }
+                    );
+                }
+            });
+
+
+            this.props.socket.on('getGeneralMessage', (data) => {
+                let newState = this.state;
+                newState.messages = data;
+
+                if (this._isMounted) {
+                    this.setState({
+                            ...newState,
+                        }
+                    );
+                }
+            });
         }
-
-        this.props.socket.on('message', (data) => {
-            let newState = this.state;
-            newState.messages = [...newState.messages, {message: data.messageInput, userId: data.userId}];
-
-            if (this._isMounted) {
-                this.setState({
-                        ...newState,
-                    }
-                );
-            }
-        });
-
-        this.props.socket.on('getGeneralMessage', (data) => {
-            let newState = this.state;
-            newState.messages = [...newState.messages, {
-                message: data.generalMessage,
-                userId: data.userId,
-                firstName: data.firstName,
-                lastName: data.lastName,
-            }];
-
-            if (this._isMounted) {
-                this.setState({
-                        ...newState,
-                    }
-                );
-            }
-        });
     }
 
     componentWillUnmount(prevLogged) {
@@ -57,7 +58,12 @@ class GeneralChat extends Component {
     }
 
     sendMessage() {
-        this.props.socket.emit('message', {messageInput: this.state.messageInput, userId: this.props.auth.userId});
+        this.props.socket.emit('message', {
+            messageInput: this.state.messageInput,
+            userId: this.props.auth.userId,
+            firstName: this.props.auth.firstName,
+            lastName: this.props.auth.lastName,
+        });
     }
 
     handleChange = (e) => {
@@ -67,6 +73,8 @@ class GeneralChat extends Component {
                 ...newState,
             }
         );
+
+        e.target.value = "";
     };
 
 
@@ -76,11 +84,11 @@ class GeneralChat extends Component {
             el.userId === this.props.auth.userId ? isMyself = true : isMyself = false;
 
             return (
-                <div key={i} className="massages__item">
+                <div key={i} className={isMyself ? 'messages__item messages__item--my-message' : "messages__item"}>
                     <div className="messages__author">
-                        {!isMyself ? el.firstName + ' ' + el.lastName + ':': 'I:'}
+                        {!isMyself ? el.firstName + ' ' + el.lastName + ':': ''}
                     </div>
-                    <div className={isMyself ? 'massages__text--right' : 'massages__text'} >
+                    <div className={'messages__text'} >
                         {el.message}
                     </div>
                 </div>
@@ -88,12 +96,14 @@ class GeneralChat extends Component {
         });
 
         return (
-            <div className="ChatWrapper">
-                <div className="massages">
+            <div className="chat">
+                <div className="messages">
                     {outputMessage}
                 </div>
-                <textarea className="message" onChange={this.handleChange} value={this.state.messageInput}/>
-                <button className="sendMessage" onClick={()=>{this.sendMessage()}}>sss</button>
+                <div className="chat__send-area">
+                    <textarea className="chat__input-message" onChange={this.handleChange} value={this.state.messageInput}/>
+                    <button className="chat__send-message btn btn-primary" onClick={()=>{this.sendMessage()}}>Send</button>
+                </div>
             </div>
         );
     }

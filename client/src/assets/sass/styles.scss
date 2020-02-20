@@ -1,9 +1,14 @@
 //font-family: 'Bangers', cursive;
 //font-family: 'Raleway', sans-serif;
+@import "variables-bootstrap";
 body {
   font-family: 'Raleway', sans-serif;
   color: #333333;
 }
+#app {
+  margin-top: 58px;
+}
+
 .header {
   padding: 5px 50px;
   display: flex;
@@ -63,10 +68,61 @@ body {
   align-items: center;
 }
 
+.chat-wrapper {
+  height: calc(100vh - 58px);
+}
 
-.ChatWrapper {
-  position: relative;
-  top: 100px;
+.chat {
+  height: 100%;
+  padding: 15px 0 0 0;
+
+  .messages {
+    height: calc(100% - 84px);
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    //background: url("../images/background.jpg");
+    background-size: cover;
+    padding: 15px;
+
+    &__item {
+      color: #ffffff;
+      display: flex;
+      padding: 10px 15px;
+      margin-bottom: 15px;
+      background: $pink;
+      align-self: flex-start;
+      border-radius: 1rem;
+
+      &--my-message {
+        align-self: flex-end;
+        background: $cyan;
+      }
+    }
+
+    &__author {
+      margin-right: 5px;
+      flex-shrink: 0;
+      font-weight: bold;
+      text-shadow: -2px 2px 1px rgba(0,0,0, .5);
+    }
+  }
+
+  &__send-area {
+    padding: 15px;
+    border-bottom: 15px;
+    background-color: #f5f5f5;
+    display: flex;
+  }
+
+  &__input-message {
+    resize: none;
+    flex: 1;
+  }
+
+  &__send-message {
+    margin-left: 1rem;
+  }
 }
 
 
