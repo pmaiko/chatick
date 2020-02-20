@@ -75,23 +75,30 @@ class GeneralChat extends Component {
     };
 
     sendMessage() {
-        this.props.socket.emit('message', {
-            messageInput: this.state.messageInput,
-            userId: this.props.auth.userId,
-            firstName: this.props.auth.firstName,
-            lastName: this.props.auth.lastName,
-        });
+        if (this.state.messageInput !== "") {
+            this.props.socket.emit('message', {
+                messageInput: this.state.messageInput,
+                userId: this.props.auth.userId,
+                firstName: this.props.auth.firstName,
+                lastName: this.props.auth.lastName,
+            });
+
+            let newState = this.state;
+            newState.messageInput = "";
+            this.setState({
+                    ...newState,
+                }
+            )
+        }
     }
 
     handleChange = e => {
         let newState = this.state;
-        newState.messageInput = e.target.value;
+        newState.messageInput = e.target.value.replace(/\n/g, '');
         this.setState({
                 ...newState,
             }
         );
-
-        e.target.value = "";
     };
 
 
