@@ -170,6 +170,10 @@ function checkToken(request, response, callback) {
 io.sockets.on('connection', function (socket) {
    console.log('connected socket');
 
+   socket.on('disconnect', function (data) {
+       console.log('disconnect socket');
+   });
+
    socket.on('message', function (data) {
        io.sockets.emit('message', data);
 
@@ -190,7 +194,7 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('getGeneralMessage', function () {
         async function generalMessage() {
-            let generalMessage = await GeneralMessages.find().sort([['_id', -1]]).limit(5);
+            let generalMessage = await GeneralMessages.find().sort([['_id', -1]]).limit(15);
             generalMessage = generalMessage.reverse();
 
             let users = await Users.find().select();

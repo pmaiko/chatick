@@ -27,7 +27,7 @@ function SingIn(props) {
 
 
     return (
-        <div className="sign-in form">
+        <div className="page-wrapper sign-in form">
             <div className="form">
                 <div className="form__title">
                     LOGIN

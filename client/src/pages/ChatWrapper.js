@@ -19,7 +19,7 @@ function ChatWrapper(props) {
 
 
     return (
-        <div className="chat-wrapper">
+        <div className="page-wrapper chat-wrapper">
             <div className="container-fluid h-100">
                 <div className="row h-100">
                     <div className="col-md-3 h-100">

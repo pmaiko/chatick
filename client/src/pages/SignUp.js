@@ -30,7 +30,7 @@ function SingUp(props) {
 
     return (
 
-        <div className="sign-up">
+        <div className="page-wrapper sign-up">
             <div className="form">
                 <div className="form__title">
                     Registration

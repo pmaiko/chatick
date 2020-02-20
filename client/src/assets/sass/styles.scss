@@ -5,8 +5,9 @@ body {
   font-family: 'Raleway', sans-serif;
   color: #333333;
 }
+
 #app {
-  margin-top: 58px;
+  height: 100vh;
 }
 
 .header {
@@ -68,16 +69,11 @@ body {
   align-items: center;
 }
 
-.chat-wrapper {
-  height: calc(100vh - 58px);
-}
-
 .chat {
   height: 100%;
   padding: 15px 0 0 0;
 
   .messages {
-    height: calc(100% - 84px);
     overflow: auto;
     display: flex;
     flex-direction: column;
@@ -123,6 +119,10 @@ body {
   &__send-message {
     margin-left: 1rem;
   }
+}
+
+.page-wrapper {
+  height: 100%;
 }
 
 

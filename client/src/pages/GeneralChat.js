@@ -1,21 +1,26 @@
 import React, { Component } from 'react'
-import { store } from '../store/index';
-
+import { store } from '../store/index'
+import mixins from '../script'
 class GeneralChat extends Component {
     _isMounted = false;
 
     constructor(props) {
         super(props);
         this.state = {
+            socketIdPrev: '',
             messageInput: '',
             messages: [],
         };
+        this.props.socket.on('connect', () => {
+
+        });
+
     }
 
     componentDidMount() {
+        mixins.addSize();
         if(this.props.auth.logged) {
             this._isMounted = true;
-            this.props.socket.emit('getGeneralMessage');
 
             this.props.socket.on('message', (data) => {
                 let newState = this.state;
@@ -32,30 +37,42 @@ class GeneralChat extends Component {
                         }
                     );
                 }
+
+                mixins.scrollMessage();
             });
 
+            if (this.props.socket.id !== this.state.socketIdPrev) {
+                this.props.socket.emit('getGeneralMessage');
+            }
 
             this.props.socket.on('getGeneralMessage', (data) => {
-                let newState = this.state;
-                newState.messages = data;
+                if (this.props.socket.id !== this.state.socketIdPrev) {
+                    let newState = this.state;
+                    newState.socketIdPrev = this.props.socket.id;
+                    newState.messages = data;
 
-                if (this._isMounted) {
-                    this.setState({
-                            ...newState,
-                        }
-                    );
+                    if (this._isMounted) {
+                        this.setState({
+                                ...newState,
+                            }
+                        );
+                    }
+                    mixins.scrollMessage();
                 }
             });
+
         }
     }
 
     componentWillUnmount(prevLogged) {
         this._isMounted = false;
-
-        // if(prevLogged !== this.props.auth.logged) {
-        //     this.props.socket.emit('getGeneralMessage');
-        // }
     }
+
+    keyPressed = event => {
+        if (event.key === "Enter") {
+            this.sendMessage();
+        }
+    };
 
     sendMessage() {
         this.props.socket.emit('message', {
@@ -66,7 +83,7 @@ class GeneralChat extends Component {
         });
     }
 
-    handleChange = (e) => {
+    handleChange = e => {
         let newState = this.state;
         newState.messageInput = e.target.value;
         this.setState({
@@ -101,7 +118,11 @@ class GeneralChat extends Component {
                     {outputMessage}
                 </div>
                 <div className="chat__send-area">
-                    <textarea className="chat__input-message" onChange={this.handleChange} value={this.state.messageInput}/>
+                    <textarea className="chat__input-message form-control"
+                              onChange={this.handleChange}
+                              value={this.state.messageInput}
+                              onKeyPress={this.keyPressed}
+                    />
                     <button className="chat__send-message btn btn-primary" onClick={()=>{this.sendMessage()}}>Send</button>
                 </div>
             </div>
