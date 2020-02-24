@@ -1,8 +1,13 @@
 //font-family: 'Bangers', cursive;
 //font-family: 'Raleway', sans-serif;
 @import "variables-bootstrap";
+@import "variables";
+@import "users";
+@import "scroll";
+
+//$not-basic-text-color: #847ea4;
 body {
-  font-family: 'Raleway', sans-serif;
+  font-family: 'Roboto', sans-serif;
   color: #333333;
 }
 
@@ -11,6 +16,7 @@ body {
 }
 
 .header {
+  background: rgba(255,255,255, .4);
   padding: 5px 50px;
   display: flex;
   justify-content: space-between;
@@ -18,7 +24,8 @@ body {
   position: fixed;
   top: 0;
   width: 100%;
-  box-shadow: 0 0 14px 0 rgba(0,0,0, .3);
+  box-shadow: 0 0 6px 0 rgba(0,0,0, .3);
+  z-index: 100;
 
   .logo {
     font-family: 'Bangers', cursive;
@@ -35,10 +42,14 @@ body {
 }
 
 .form {
-  background: #fff;
+  box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.3);
   padding: 50px 30px;
   width: 22em;
   max-width: 100%;
+  overflow: auto;
+  max-height: 100vh;
+  background: rgba(255,255,255, .4);
+  border-radius: 10px;
 
   &__title {
     font-weight: 600;
@@ -49,6 +60,7 @@ body {
   }
 
   &__buttons {
+    width: 100%;
     margin-top: 2em;
     margin: 0 -.5em;
 
@@ -59,9 +71,8 @@ body {
   }
 }
 .sign-in, .sign-up {
-  background: url("../images/background.jpg");
+  background: url("../images/woman-in-white-bathroom-robe-holding-black-smartphone-3757650.jpg");
   background-size: cover;
-
   width: 100%;
   height: 100vh;
   display: flex;
@@ -70,10 +81,41 @@ body {
 }
 
 .chat {
+  font-size: 16px;
   height: 100%;
-  padding: 15px 0 0 0;
+  color: #fff;
+  background-color: #e5e5ff;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    padding: 0 15px;
+  }
+
+  &__head-text {
+    color: $main-color;
+    font-size: 1.2rem;
+  }
+
+  &__close {
+    cursor: pointer;
+    flex-shrink: 0;
+    background-color: $green;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3rem;
+    margin-right: -15px;
+
+    &:hover {
+      background-color: $pink;
+    }
+  }
 
   .messages {
+    font-size: 14px;
     overflow: auto;
     display: flex;
     flex-direction: column;
@@ -84,45 +126,223 @@ body {
     &__item {
       color: #ffffff;
       display: flex;
-      padding: 10px 15px;
       margin-bottom: 15px;
-      background: $pink;
       align-self: flex-start;
-      border-radius: 1rem;
+      padding-right: 50px;
 
       &--my-message {
         align-self: flex-end;
-        background: $cyan;
+        flex-direction: row-reverse;
+        padding-right: 0;
+        padding-left: 50px;
+
+        .user-status {
+          right: auto;
+          left: 0;
+        }
+
+        .messages {
+          &__author {
+            flex-direction: row-reverse;
+          }
+
+          &__time {
+            margin-left: 0;
+            margin-right: 1em;
+          }
+
+          &__read-message {
+            left: -35px;
+            right: auto;
+          }
+
+          &__block {
+            margin-left: 0;
+            margin-right: 15px;
+          }
+
+          &__text {
+            text-align: right;
+            padding: 10px 15px;
+            background: #fff;
+            color: $main-color;
+            border-radius: .8rem;
+            border-top-left-radius: .8rem;
+            border-top-right-radius: 0;
+
+          }
+        }
       }
     }
 
     &__author {
-      margin-right: 5px;
       flex-shrink: 0;
-      font-weight: bold;
-      text-shadow: -2px 2px 1px rgba(0,0,0, .5);
+      color: $main-color;
+      margin-bottom: .2rem;
+      display: flex;
+      align-items: center;
+    }
+
+
+    &__time {
+      font-size: 12px;
+      color: $tooltip-text-color;
+      margin-left: 1em;
+    }
+
+    &__read-message {
+      top: 50%;
+      position: absolute;
+      right: -35px;
+      transform: translateY(-50%);
+      font-size: 25px;
+      color: $tooltip-text-color;
+    }
+
+    &__photo {
+      width: 35px;
+      height: 35px;
+      flex-shrink: 0;
+      position: relative;
+
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    &__block {
+      margin-left: 15px;
+    }
+
+    &__text {
+      text-align: left;
+      padding: 10px 15px;
+      background: $main-color2;
+      border-radius: .8rem;
+      border-top-left-radius: 0;
+      word-break: break-all;
+      position: relative;
+
     }
   }
 
+  &__typing {
+    display: none;
+    position: absolute;
+    top: 0;
+    font-size: 12px;
+    color: $tooltip-text-color;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: calc(100% - 30px);
+  }
+
   &__send-area {
-    padding: 15px;
-    border-bottom: 15px;
-    background-color: #f5f5f5;
+    position: relative;
+    padding: 22px 15px 15px 15px;
     display: flex;
   }
 
   &__input-message {
+    padding: 1rem .5rem;
     resize: none;
-    flex: 1;
+    width: 100%;
+    border: none;
+    background-color: $send-area-color;
+    color: $main-color;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+
+    &:-moz-placeholder {
+
+    }
+
+    &::-webkit-input-placeholder{
+      color: $tooltip-text-color;
+      font-style: italic;
+    }
+
+    &:focus {
+      outline: none;
+      //box-shadow: 0 0 0 0.1rem rgba(52,179,248, 0.5);
+    }
   }
 
   &__send-message {
-    margin-left: 1rem;
+    display: flex;
+    align-items: center;
+    margin-left: .5rem;
+    font-size: 1.75rem;
+    color: $main-color1;
+    flex-shrink: 0;
+
+    &:hover i{
+      background-color: $bg-hover-color;
+      color: $hover-color;
+    }
+
+    i {
+      border-radius: 100%;
+      padding: .5em;
+    }
+  }
+
+  &__textarea-wrap {
+    background-color: $send-area-color;
+    border-radius: 2rem;
+    width: 100%;
+    display: flex;
+    padding: 0 2rem;
+  }
+
+  &__expressionless {
+    color: $tooltip-text-color;
+    font-size: 1.2rem;
+    margin-right: .5rem;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+
+    &:hover i{
+      background-color: $bg-hover-color;
+      color: $hover-color;
+    }
+
+    i {
+      border-radius: 100%;
+      padding: .5em;
+    }
   }
 }
 
 .page-wrapper {
   height: 100%;
+}
+
+.user-status {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  bottom: 0;
+  right: 0;
+  border-radius: 100%;
+  border: 1px solid #fff;
+
+  &--online {
+    background: $green;
+
+
+  }
+}
+
+.details {
+  background: url("../images/two-women-sitting-and-chatting-near-table-1545499.jpg");
+  height: 100%;
+  width: 100%;
+  background-position: center center;
+  background-size: cover;
 }
 
 

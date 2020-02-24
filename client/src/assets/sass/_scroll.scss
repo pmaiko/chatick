@@ -1,0 +1,21 @@
+@import "variables-bootstrap";
+
+::-webkit-scrollbar {
+  width: .3rem;
+  height: .3rem;
+}
+
+::-webkit-scrollbar-track {
+  width: .3rem;
+  height: .3rem;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 0;
+  background-color: $pink;
+}
+
+::-webkit-scrollbar-corner {
+  opacity: 0;
+}
+

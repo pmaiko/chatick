@@ -11,6 +11,7 @@ import App from './App';
 // styles
 import 'bootstrap/dist/css/bootstrap.css';
 import './assets/sass/app.scss'
+import './assets/libs/icofont.min.css'
 
 const store = createStore(reducers, applyMiddleware(thunk));
 // store.getState();

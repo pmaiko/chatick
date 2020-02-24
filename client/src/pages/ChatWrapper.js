@@ -22,11 +22,14 @@ function ChatWrapper(props) {
         <div className="page-wrapper chat-wrapper">
             <div className="container-fluid h-100">
                 <div className="row h-100">
-                    <div className="col-md-3 h-100">
+                    <div className="col-md-3 h-100 px-0">
                         <Users socket={socket}/>
                     </div>
-                    <div className="col-md-6 h-100">
+                    <div className="col-md-6 h-100 px-0">
                         <GeneralChat socket={socket}/>
+                    </div>
+                    <div className="col-md-3 h-100 px-0">
+                        <div className="details"/>
                     </div>
                 </div>
             </div>
