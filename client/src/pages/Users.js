@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
 import {store} from '../store/index';
 import avaImg from '../assets/images/ava.png';
+import {Link} from "react-router-dom"
+import {URL} from "../constants";
 
 class Users extends Component {
     _isMounted = false;
@@ -16,14 +18,28 @@ class Users extends Component {
     componentDidMount() {
         this._isMounted = true;
         if (this.props.auth.logged) {
-            this.props.socket.emit('getUsers');
+            console.log(this.props.socket.id);
+            this.props.socket.emit('userConnect', {
+                userId: this.props.auth.userId,
+                userSocketId: this.props.socket.id,
+            });
         }
 
 
-        this.props.socket.on('getUsers', (data) => {
+        this.props.socket.on('userConnect', (data) => {
             let newState = this.state;
             newState.users = data;
-            //console.log(newState.users);
+            if (this._isMounted) {
+                this.setState({
+                        ...newState,
+                    }
+                );
+            }
+        });
+
+        this.props.socket.on('userConnect', (data) => {
+            let newState = this.state;
+            newState.users = data;
             if (this._isMounted) {
                 this.setState({
                         ...newState,
@@ -56,21 +72,23 @@ class Users extends Component {
         let outputUsers = this.state.users.map((el, i) => {
             // console.log(el);
             return (
-                <div key={i} className="users__item">
-                    <div className="users__photo">
-                        <img src={avaImg} alt=""/>
-                        <div className="user-status user-status--online"/>
-                    </div>
-                    <div className="users__info">
-                        <div className="users__name">
-                            {el.firstName} {el.lastName}
-                            <span className="users__time">8min</span>
+                <Link key={i} to={`/chat/${el._id}/${el.userSocketId}`}>
+                    <div className="users__item">
+                        <div className="users__photo">
+                            <img src={avaImg} alt=""/>
+                            <div className="user-status user-status--online"/>
                         </div>
-                        <div className="users__last-message">
-                            Hey last, can
+                        <div className="users__info">
+                            <div className="users__name">
+                                {el.firstName} {el.lastName}
+                                <span className="users__time">8min</span>
+                            </div>
+                            <div className="users__last-message">
+                                Hey last, can
+                            </div>
                         </div>
                     </div>
-                </div>
+                </Link>
 
             );
         });

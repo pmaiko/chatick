@@ -11,13 +11,28 @@ const schema = new Schema({
         unique: false,
     },
 
-    userId: {
+    userFromId: {
         type: String,
         unique: false,
     },
+
+    userToId: {
+        type: String,
+        unique: false,
+    },
+
+    time: {
+        type: String,
+        unique: false,
+    },
+
+    read: {
+        type: Boolean,
+        unique: false,
+    }
 
 });
 
 //schema.plugin(autoIncrement.plugin, 'id');
 
-module.exports = model('GeneralMessages', schema);
+module.exports = model('PrivateMessages', schema);

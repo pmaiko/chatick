@@ -3,8 +3,9 @@ import { store } from '../store/index'
 import mixins from '../script'
 import Chat from './Chat'
 import avaImg from '../assets/images/ava.png';
+import { withRouter } from "react-router";
 
-class GeneralChat extends Component {
+class PrivateChat extends Component {
     _isMounted = false;
 
     constructor(props) {
@@ -14,10 +15,9 @@ class GeneralChat extends Component {
             messageInput: '',
             messages: [],
         };
-        // this.props.socket.on('connect', () => {
-        //
-        // });
 
+        // let {userId} = props.useParams();
+        console.log(props.match.params.userId);
     }
 
     componentDidMount() {
@@ -107,14 +107,18 @@ class GeneralChat extends Component {
 
     render() {
         return (
-            <Chat
-                messages={this.state.messages}
-                state={this.state}
-                auth={this.props.auth}
-                handleChange={this.handleChange}
-                keyPressed={this.keyPressed}
-                sendMessage={this.sendMessage}
-            />
+            <div>
+                asd1
+                {/*<Chat*/}
+                {/*messages={this.state.messages}*/}
+                {/*state={this.state}*/}
+                {/*auth={this.props.auth}*/}
+                {/*handleChange={this.handleChange}*/}
+                {/*keyPressed={this.keyPressed}*/}
+                {/*sendMessage={this.sendMessage}*/}
+                {/*/>*/}
+            </div>
+
         );
 
     }
@@ -126,5 +130,5 @@ class GeneralChat extends Component {
     // }
 }
 
-export default store(GeneralChat);
+export default store(withRouter(PrivateChat));
 

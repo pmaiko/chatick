@@ -24,6 +24,7 @@ const crypto = require('crypto');
 
 const Users = require('./models/Users');
 const GeneralMessages = require('./models/GeneralMessages');
+const PrivateMessages = require('./models/PrivateMessages');
 
 const Key = "chatick";
 
@@ -185,9 +186,17 @@ io.sockets.on('connection', function (socket) {
        generalMessages.save();
    });
 
-    socket.on('getUsers', function () {
-        Users.find().select('firstName').select('lastName').select('email').then(function (data) {
-            io.sockets.emit('getUsers', data);
+    socket.on('userConnect', function (data) {
+        Users.find().select('firstName').select('lastName').select('email').then(function (users) {
+            users = users.map(function (user) {
+                if (user._id == data.userId) {
+                   user = {...user._doc, userSocketId: data.userSocketId};
+                    console.log(user);
+                }
+
+               return user;
+            });
+            io.sockets.emit('userConnect', users);
         });
 
     });
@@ -222,6 +231,48 @@ io.sockets.on('connection', function (socket) {
 
         generalMessage().then(function (data) {
             io.sockets.emit('getGeneralMessage', data);
+        });
+    });
+
+    socket.on('privateMessage', function (data) {
+        socket.broadcast.to(data.socketId).emit('privateMessage', data.message);
+
+        const privateMessages = new PrivateMessages({
+            message: data.message,
+            userFromId: data.userFromId,
+            userToId: data.userToId,
+            time: data.time,
+            read: false,
+        });
+
+        privateMessages.save();
+    });
+
+    socket.on('getPrivateMessage', function (data) {
+        async function privateMessage() {
+            let privateMessage = await PrivateMessages.find().sort([['_id', -1]]).limit(15);
+            privateMessage = privateMessage.reverse();
+
+            // let users = await Users.find().select();
+
+            if (!Array.isArray(privateMessage)) {
+                privateMessage = [privateMessage];
+            }
+
+            let newArray = [];
+            privateMessage.map(messageObj =>{
+                if (messageObj.userToId == data.userId) {
+                    newArray = [...newArray, {
+                        ...messageObj,
+                    }];
+                }
+
+            });
+            return newArray;
+        }
+
+        privateMessage().then(function (data) {
+            io.sockets.emit('getPrivateMessage', data);
         });
     });
 

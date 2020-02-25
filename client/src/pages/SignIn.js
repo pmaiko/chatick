@@ -8,7 +8,7 @@ function SingIn(props) {
     let history = useHistory();
     useEffect(() =>{
         if (props.auth.logged) {
-            history.push("/chatWrapper");
+            history.push("/chat");
         }
     },[props.auth.logged]);
 

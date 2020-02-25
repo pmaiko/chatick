@@ -26,7 +26,7 @@ function App(props) {
         <BrowserRouter>
             <Header />
             <Switch>
-                <Route path="/chatWrapper" component={ChatWrapper}/>
+                <Route path="/chat" component={ChatWrapper}/>
                 <Route path="/registration" component={SignUp}/>
                 <Route path="/" component={SignIn}/>
             </Switch>
