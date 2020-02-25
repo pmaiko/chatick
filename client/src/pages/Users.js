@@ -18,7 +18,10 @@ class Users extends Component {
     componentDidMount() {
         this._isMounted = true;
         if (this.props.auth.logged) {
-            console.log(this.props.socket.id);
+            this.props.socket.on('connect', () => {
+                console.log(this.props.socket.id);
+            });
+
             this.props.socket.emit('userConnect', {
                 userId: this.props.auth.userId,
                 userSocketId: this.props.socket.id,

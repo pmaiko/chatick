@@ -14,9 +14,9 @@ class GeneralChat extends Component {
             messageInput: '',
             messages: [],
         };
-        // this.props.socket.on('connect', () => {
-        //
-        // });
+        this.props.socket.on('connect', () => {
+
+        });
 
     }
 
