@@ -168,11 +168,14 @@ function checkToken(request, response, callback) {
 
 }
 
+let users = [];
 io.sockets.on('connection', function (socket) {
    console.log('connected socket');
-
-   socket.on('disconnect', function (data) {
-       console.log('disconnect socket');
+    users.push(socket.id);
+    io.sockets.emit('connect');
+    console.log(users, 'asd');
+    socket.on('disconnect', function (data) {
+       console.log(socket.id,'disconnect socket');
    });
 
    socket.on('message', function (data) {
@@ -188,15 +191,16 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('userConnect', function (data) {
         Users.find().select('firstName').select('lastName').select('email').then(function (users) {
-            users = users.map(function (user) {
-                if (user._id == data.userId) {
-                   user = {...user._doc, userSocketId: data.userSocketId};
-                    console.log(user);
-                }
-
-               return user;
-            });
-            io.sockets.emit('userConnect', users);
+            // users = users.map(function (user) {
+            //     if (user._id == data.userId) {
+            //        user = {...user._doc, userSocketId: data.userSocketId};
+            //         console.log(user);
+            //     }
+            //
+            //    return user;
+            // });
+            console.log(data);
+            io.sockets.emit('userConnect', {users: [...users], usersOnline: {...data}});
         });
 
     });
