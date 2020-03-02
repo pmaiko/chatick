@@ -329,11 +329,10 @@ body {
   right: 0;
   border-radius: 100%;
   border: 1px solid #fff;
+  background: red;
 
   &--online {
     background: $green;
-
-
   }
 }
 

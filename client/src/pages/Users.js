@@ -2,33 +2,46 @@ import React, {Component, useEffect, useState} from 'react'
 import {store} from '../store/index';
 import avaImg from '../assets/images/ava.png';
 import {Link} from "react-router-dom"
-import {URL} from "../constants";
 
-function Users(props){
+const Users = (props) => {
     const [state, setState] = useState({
         users: [],
-        usersOnline: [],
+        usersConnect: [],
         socketId: '',
         socketIdPrev: '',
     });
 
+    // props.socket.on('connect', () => {
+    //     console.log(props.socket.id);
+    // });
+
     useEffect(() =>{
         if (props.auth.logged) {
-            console.log(props.s_socket.socketId);
+            props.socket.emit('userConnect',{
+                userId: props.auth.userId,
+            });
+
             props.socket.on('userConnect', (data) => {
                 let newState = state;
-                newState.usersOnline = [...newState.usersOnline, {
-                    userId: data.userId,
-                    userSocketId: data.userSocketId,
-                }];
-                newState.users = data.users;
+                newState.users = [];
+
+                data.users.map((user) => {
+                    data.usersConnect.map((userConnect) => {
+                        if (user._id === userConnect.userId) {
+                            user.socketId = userConnect.socketId;
+                        }
+                    });
+
+                    newState.users.push(user);
+                });
+
                 setState({
                         ...newState,
                     }
                 );
             });
         }
-    },[props.auth.logged, props.s_socket.socketId]);
+    },[props.auth.logged, window]);
 
     let sendMessage = () => {
         props.socket.emit('message', {messageInput: state.messageInput, userId: props.auth.userId});
@@ -44,26 +57,30 @@ function Users(props){
     };
 
     let outputUsers = state.users.map((el, i) => {
-        return (
-            <Link key={i} to={`/chat/${el._id}/${el.userSocketId}`}>
-                <div className="users__item">
-                    <div className="users__photo">
-                        <img src={avaImg} alt=""/>
-                        <div className="user-status user-status--online"/>
-                    </div>
-                    <div className="users__info">
-                        <div className="users__name">
-                            {el.firstName} {el.lastName}
-                            <span className="users__time">8min</span>
+        if (el._id !== props.auth.userId) {
+            return (
+                <Link key={i} to={`/chat/${el._id}${el.socketId ? '/' + el.socketId : ''}`}>
+                    <div className="users__item">
+                        <div className="users__photo">
+                            <img src={avaImg} alt=""/>
+                            <div
+                                className={el.socketId ? 'user-status user-status--online': 'user-status'}
+                            />
                         </div>
-                        <div className="users__last-message">
-                            Hey last, can
+                        <div className="users__info">
+                            <div className="users__name">
+                                {el.firstName} {el.lastName}
+                                <span className="users__time">8min</span>
+                            </div>
+                            <div className="users__last-message">
+                                Hey last, can
+                            </div>
                         </div>
                     </div>
-                </div>
-            </Link>
+                </Link>
 
-        );
+            );
+        }
     });
 
     return (
@@ -72,11 +89,11 @@ function Users(props){
                 <div className="users__item">
                     <div className="users__photo">
                         <img src={avaImg} alt=""/>
-                        <div className="user-status user-status--online"/>
+                        {/*<div className="user-status user-status--online"/>*/}
                     </div>
                     <div className="users__info">
                         <div className="users__name">
-                            {/*{el.firstName} {el.lastName}*/}Petya Maiko
+                            {props.auth.firstName} {props.auth.lastName}
                         </div>
                         <div className="users__status-text">
                             Status

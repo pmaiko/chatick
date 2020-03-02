@@ -3,17 +3,15 @@ import { store } from '../store/index'
 import actions from '../store/actions'
 import GeneralChat from './GeneralChat'
 import Users from './Users'
-import io from 'socket.io-client'
 import { URL } from '../constants'
 import { useHistory } from "react-router-dom";
 import {BrowserRouter, Switch, Route, useParams} from "react-router-dom"
 import PrivateChat from './PrivateChat'
 
-function ChatWrapper(props) {
-    // socket.on('connect', () => {
-    //
-    // });
+import io from 'socket.io-client'
+const socket = io(URL);
 
+function ChatWrapper(props) {
     let history = useHistory();
     const [state, setState] = useState({socket: undefined});
     useEffect(() => {
@@ -21,33 +19,28 @@ function ChatWrapper(props) {
             history.push("/");
         }
         else {
-            let newState = state;
-            newState.socket = io.connect(URL);
-            newState.socket.on('connect', () => {
-                props.writeSocketId(newState.socket.id);
-            });
-            setState({
-                ...newState,
-            });
         }
 
     }, [props.auth.logged]);
 
-    if (state.socket !== undefined) {
+    if (socket) {
         return (
             <div className="page-wrapper chat-wrapper">
                 <div className="container-fluid h-100">
                     <div className="row h-100">
                         <div className="col-md-3 h-100 px-0">
-                            <Users socket={state.socket} />
+                            <Users socket={socket} />
                         </div>
                         <div className="col-md-6 h-100 px-0">
                             <Switch>
+                                <Route path={`/chat/:userId/:socketId`}>
+                                    <PrivateChat socket={socket} useParams={useParams}/>
+                                </Route>
                                 <Route path={`/chat/:userId`}>
-                                    <PrivateChat socket={state.socket} useParams={useParams}/>
+                                    <PrivateChat socket={socket} useParams={useParams}/>
                                 </Route>
                                 <Route path={`/chat`}>
-                                    <GeneralChat socket={state.socket}/>
+                                    <GeneralChat socket={socket}/>
                                 </Route>
                             </Switch>
                         </div>
@@ -66,6 +59,5 @@ function ChatWrapper(props) {
 
 
 }
-
 export default store(ChatWrapper);
 

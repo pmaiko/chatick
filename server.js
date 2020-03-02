@@ -168,17 +168,36 @@ function checkToken(request, response, callback) {
 
 }
 
-let users = [];
+let usersConnect = [];
+
 io.sockets.on('connection', function (socket) {
    console.log('connected socket');
-    users.push(socket.id);
-    io.sockets.emit('connect');
-    console.log(users, 'asd');
+
+   usersConnect = [...usersConnect, {socketId: socket.id}];
+
     socket.on('disconnect', function (data) {
-       console.log(socket.id,'disconnect socket');
+
+        console.log('disconnect socket');
+
+        usersConnect.map((userConnect, index) => {
+            if (userConnect.socketId === socket.id) {
+                usersConnect.splice(index, 1);
+            }
+        });
+
+
+        Users.find().select('firstName').select('lastName').select('email').then(function (users) {
+            users = users.map(function (user) {
+                if (user._id == data.userId) {
+                    user = {...user._doc};
+                }
+                return user;
+            });
+            io.sockets.emit('userConnect', {users: [...users], usersConnect: [...usersConnect]});
+        });
    });
 
-   socket.on('message', function (data) {
+    socket.on('message', function (data) {
        io.sockets.emit('message', data);
 
        const generalMessages = new GeneralMessages({
@@ -190,17 +209,20 @@ io.sockets.on('connection', function (socket) {
    });
 
     socket.on('userConnect', function (data) {
+        usersConnect.map((userConnect, index) => {
+            if (userConnect.socketId === socket.id) {
+                usersConnect[index].userId = data.userId;
+            }
+        });
+
         Users.find().select('firstName').select('lastName').select('email').then(function (users) {
-            // users = users.map(function (user) {
-            //     if (user._id == data.userId) {
-            //        user = {...user._doc, userSocketId: data.userSocketId};
-            //         console.log(user);
-            //     }
-            //
-            //    return user;
-            // });
-            console.log(data);
-            io.sockets.emit('userConnect', {users: [...users], usersOnline: {...data}});
+            users = users.map(function (user) {
+                if (user._id == data.userId) {
+                   user = {...user._doc};
+                }
+               return user;
+            });
+            io.sockets.emit('userConnect', {users: [...users], usersConnect: [...usersConnect]});
         });
 
     });
@@ -239,10 +261,10 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('privateMessage', function (data) {
-        socket.broadcast.to(data.socketId).emit('privateMessage', data.message);
+        io.sockets.to(data.socketId).to(socket.id).emit('privateMessage', data);
 
         const privateMessages = new PrivateMessages({
-            message: data.message,
+            message: data.messageInput,
             userFromId: data.userFromId,
             userToId: data.userToId,
             time: data.time,
@@ -257,18 +279,29 @@ io.sockets.on('connection', function (socket) {
             let privateMessage = await PrivateMessages.find().sort([['_id', -1]]).limit(15);
             privateMessage = privateMessage.reverse();
 
-            // let users = await Users.find().select();
+            let users = await Users.find().select();
 
-            if (!Array.isArray(privateMessage)) {
-                privateMessage = [privateMessage];
-            }
-
+            // if (!Array.isArray(privateMessage)) {
+            //     privateMessage = [privateMessage];
+            // }
+            // console.log(privateMessage[0].userFromId, 'adasdasdasdasdasdasdas');
             let newArray = [];
             privateMessage.map(messageObj =>{
-                if (messageObj.userToId == data.userId) {
-                    newArray = [...newArray, {
-                        ...messageObj,
-                    }];
+                if (messageObj.userFromId == data.userFromId && messageObj.userToId == data.userToId ||
+                    messageObj.userFromId == data.userToId && messageObj.userToId == data.userFromId) {
+                    users.map(userObj =>{
+                        if (messageObj.userFromId == userObj._id) {
+                            newArray = [...newArray, {
+                                message: messageObj.message,
+                                userId: userObj._id,
+                                firstName: userObj.firstName,
+                                lastName: userObj.lastName,
+                            }];
+                        }
+                    });
+                    // newArray = [...newArray, {
+                    //     ...messageObj,
+                    // }];
                 }
 
             });
